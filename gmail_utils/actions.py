@@ -28,14 +28,20 @@ def search_and_trash(query):
     for msg in messages:
         service.users().messages().trash(userId="me", id=msg["id"]).execute()
 
+from llm_utils.classifier import generate_response # You will create this function
 def save_draft(subject, body, to_email):
     service = get_gmail_service()
+    
+    # 1. Generate the automated response using a new function
+    automated_response_body = generate_response(body)
 
-    message_text = MIMEText(body)
+    # 2. Create the MIMEText message with the new response
+    message_text = MIMEText(automated_response_body)
     message_text['Subject'] = f"Re: {subject}"
     message_text['From'] = "me"
-    message_text['To'] = to_email # The email address of the original sender
+    message_text['To'] = to_email
 
+    # 3. Encode the message to base64url string
     raw_message = base64.urlsafe_b64encode(message_text.as_bytes()).decode('utf-8')
 
     message = {
@@ -43,5 +49,6 @@ def save_draft(subject, body, to_email):
             "raw": raw_message
         }
     }
+    
     draft = service.users().drafts().create(userId="me", body=message).execute()
     return draft["id"]
