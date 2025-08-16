@@ -1,3 +1,5 @@
+import base64
+from email.mime.text import MIMEText
 from gmail_utils.auth import get_gmail_service
 
 def move_email(email_id, label_name):
@@ -26,11 +28,19 @@ def search_and_trash(query):
     for msg in messages:
         service.users().messages().trash(userId="me", id=msg["id"]).execute()
 
-def save_draft(subject, body):
+def save_draft(subject, body, to_email):
     service = get_gmail_service()
+
+    message_text = MIMEText(body)
+    message_text['Subject'] = f"Re: {subject}"
+    message_text['From'] = "me"
+    message_text['To'] = to_email # The email address of the original sender
+
+    raw_message = base64.urlsafe_b64encode(message_text.as_bytes()).decode('utf-8')
+
     message = {
         "message": {
-            "raw": f"Subject: Re: {subject}\n\nAuto-generated reply:\n{body}".encode("utf-8").decode("latin1")
+            "raw": raw_message
         }
     }
     draft = service.users().drafts().create(userId="me", body=message).execute()

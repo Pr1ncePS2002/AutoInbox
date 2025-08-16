@@ -7,7 +7,10 @@ import os, json
 
 load_dotenv()
 
-SCOPES = ["https://www.googleapis.com/auth/gmail.modify"]
+SCOPES = ["https://www.googleapis.com/auth/gmail.labels",
+          "https://www.googleapis.com/auth/gmail.send",
+          "https://www.googleapis.com/auth/gmail.readonly",
+          "https://www.googleapis.com/auth/gmail.modify"]
 
 def get_gmail_service():
     creds = None
