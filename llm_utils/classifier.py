@@ -43,3 +43,19 @@ def classify_email(subject, body):
         messages=[{"role": "user", "content": prompt}]
     )
     return resp.choices[0].message.content.strip()
+
+def generate_response(email_body):
+    prompt = f"""
+    You are an AI assistant. Write a polite and concise response to the following email.
+    Do not add any signatures.
+
+    Email Body:
+    {email_body}
+
+    Your Response:
+    """
+    resp = client.chat.completions.create(
+        model="llama3-8b-8192",
+        messages=[{"role": "user", "content": prompt}]
+    )
+    return resp.choices[0].message.content.strip()
