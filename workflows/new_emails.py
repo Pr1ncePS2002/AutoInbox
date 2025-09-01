@@ -1,8 +1,8 @@
 from typing import List, Optional
 from langgraph.graph import StateGraph
 from gmail_utils.fetch import fetch_new_emails
-from gmail_utils.actions import move_email, save_draft
-from llm_utils.classifier import classify_email
+from gmail_utils.actions import move_email, save_draft, batch_move_emails
+from llm_utils.classifier import classify_email, needs_response
 from pydantic import BaseModel
 import time # Import the time module
 
@@ -23,45 +23,79 @@ def process_new_emails():
     return sg.compile()
 
 def fetch_emails_node(state: EmailState):
-    emails = fetch_new_emails()
+    # Use cache for better performance
+    emails = fetch_new_emails(use_cache=True)
     return {"emails": emails}
 
 def classify_emails_node(state: EmailState):
     classified = []
     if state.emails:
         for email in state.emails:
-            # Add a 4-second delay to comply with the 15 requests per minute quota
-            time.sleep(4) 
+            # Add a 2-second delay to comply with the quota but optimize for performance
+            time.sleep(2) 
             
             try:
+                # Use the new classification system
                 label = classify_email(email["subject"], email["body"])
-                classified.append({**email, "label": label})
+                needs_reply = label.strip().lower() == "wanted important"
+                classified.append({
+                    **email, 
+                    "label": label,
+                    "needs_reply": needs_reply
+                })
             except Exception as e:
                 print(f"Error classifying email {email['id']}: {e}")
-                # You can add a fallback or skip the email on error
-                continue
+                # Add with default classification on error
+                classified.append({
+                    **email, 
+                    "label": "Unwanted Important",
+                    "needs_reply": False
+                })
     return {"classified_emails": classified}
-
-# In workflows/new_emails.py
 
 def route_action(state: EmailState):
     results = []
+    
+    # Prepare batch operations
+    wanted_important_ids = []
+    unwanted_important_ids = []
+    
     if state.classified_emails:
         for email in state.classified_emails:
-            label = email["label"]
             email_id = email["id"]
-            subject, body = email["subject"], email["body"]
-            to_email = email["to_email"] # Access the sender's email from the state
-
-            if label == "Important":
-                move_email(email_id, "IMPORTANT")
-                draft_id = save_draft(subject, body, to_email) # Pass the recipient's email
-                results.append({"email_id": email_id, "draft_id": draft_id})
-            elif label == "Promotions":
-                move_email(email_id, "CATEGORY_PROMOTIONS")
-            elif label == "Updates":
-                move_email(email_id, "CATEGORY_UPDATES")
-            elif label == "Spam":
-                move_email(email_id, "SPAM")
-            results.append({"email_id": email_id, "label": label})
+            subject = email["subject"]
+            body = email["body"]
+            to_email = email["to_email"]
+            label = email["label"]
+            needs_reply = email.get("needs_reply", False)
+            
+            # Categorize based on new classification
+            if label.strip().lower() == "wanted important":
+                wanted_important_ids.append(email_id)
+                
+                # Only create draft replies for emails that need a response
+                if needs_reply:
+                    try:
+                        draft_id = save_draft(subject, body, to_email)
+                        results.append({
+                            "email_id": email_id, 
+                            "action": "Created draft reply",
+                            "draft_id": draft_id
+                        })
+                    except Exception as e:
+                        print(f"Error creating draft for {email_id}: {e}")
+            else:  # Unwanted Important
+                unwanted_important_ids.append(email_id)
+                results.append({
+                    "email_id": email_id, 
+                    "action": "Marked as important, no reply needed"
+                })
+        
+        # Batch move emails to appropriate labels
+        if wanted_important_ids:
+            batch_move_emails(wanted_important_ids, "IMPORTANT")
+        
+        if unwanted_important_ids:
+            batch_move_emails(unwanted_important_ids, "IMPORTANT")
+            
     return {"results": results}
