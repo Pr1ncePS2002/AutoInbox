@@ -1,4 +1,3 @@
-```markdown
 # 📌 Project: AutoInbox(AI-Powered Gmail Automation)
 
 ## 🧠 Overview
@@ -9,7 +8,9 @@ This project is a Python-based system designed to automate various tasks within 
 
 *   **Automated Email Categorization:** Uses AI models to classify emails into predefined categories (e.g., "Wanted Important", "Unwanted Important").
 *   **AI-Powered Response Generation:** Generates draft responses to emails based on their content, using Groq or other LLMs.
-*   **Customizable Automation Rules:** Allows users to define rules for handling emails based on their classification, such as moving them to specific labels or deleting them.
+*   **Customizable Automation Rules:** Allows users to define rules for handling emails based on their classification,
+                                       such as moving them to specific labels or deleting them.
+    
 *   **Email Retrieval and Caching:** Efficiently fetches emails from Gmail, with caching to improve performance and reduce API calls.
 *   **Gmail API Interaction:** Provides robust functions for interacting with the Gmail API, including moving, deleting, and saving draft emails.
 *   **Rate Limiting and Error Handling:** Implements rate limiting, exponential backoff, and retry mechanisms to handle API errors and prevent exceeding quota limits.
@@ -108,5 +109,6 @@ This project is a Python-based system designed to automate various tasks within 
     *   `process_new_emails`: This workflow is actively invoked. It fetches new emails, classifies them, and routes them to different actions.
     *   `process_existing_emails`: This workflow is commented out and is designed to process existing emails based on a count specified by a command-line argument.
     *   `daily_cleanup`: This workflow is commented out and is designed to be executed daily for cleanup tasks.
+
 
 
