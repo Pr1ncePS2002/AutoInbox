@@ -1,5 +1,5 @@
 ```markdown
-# 📌 Project: AI-Powered Gmail Automation
+# 📌 Project: AutoInbox(AI-Powered Gmail Automation)
 
 ## 🧠 Overview
 
@@ -24,8 +24,8 @@ This project is a Python-based system designed to automate various tasks within 
 1.  **Clone the Repository:**
 
     ```bash
-    git clone <repository_url>  # Replace with the actual repository URL
-    cd <project_directory>  # Navigate into the project directory
+    git clone "https://github.com/Pr1ncePS2002/AutoInbox"  
+    cd AutoInbox>
     ```
 
 2.  **Create a Virtual Environment:**
@@ -51,7 +51,7 @@ This project is a Python-based system designed to automate various tasks within 
 4.  **Install Dependencies:**
 
     ```bash
-    pip install -r requirements.txt  # Assuming a requirements.txt file exists
+    pip install -r requirements.txt  
     ```
 
     If no `requirements.txt` exists, install the key dependencies:
@@ -108,4 +108,5 @@ This project is a Python-based system designed to automate various tasks within 
     *   `process_new_emails`: This workflow is actively invoked. It fetches new emails, classifies them, and routes them to different actions.
     *   `process_existing_emails`: This workflow is commented out and is designed to process existing emails based on a count specified by a command-line argument.
     *   `daily_cleanup`: This workflow is commented out and is designed to be executed daily for cleanup tasks.
+
 
