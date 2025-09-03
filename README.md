@@ -1,4 +1,4 @@
-# 📌 Project: AutoInbox(AI-Powered Gmail Automation)
+# 📌 Title: AutoInbox(AI-Powered Gmail Automation)
 
 ## 🧠 Overview
 
@@ -109,6 +109,7 @@ This project is a Python-based system designed to automate various tasks within 
     *   `process_new_emails`: This workflow is actively invoked. It fetches new emails, classifies them, and routes them to different actions.
     *   `process_existing_emails`: This workflow is commented out and is designed to process existing emails based on a count specified by a command-line argument.
     *   `daily_cleanup`: This workflow is commented out and is designed to be executed daily for cleanup tasks.
+
 
 
 
