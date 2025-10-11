@@ -61,14 +61,24 @@ EMAIL_SETTINGS = {
 }
 
 # LLM Settings
+# config/settings.py
+
+# LLM_SETTINGS = {
+#     # Model to use for classification
+#     "CLASSIFICATION_MODEL": "llama-3.1-8b-instant",
+    
+#     # Model to use for response generation
+#     "RESPONSE_MODEL": "llama-3.1-8b-instant",
+    
+#     # Classification categories
+#     "CATEGORIES": ["Wanted Important", "Unwanted Important", "Promotions", "Updates", "Spam"],
+# }
+
 LLM_SETTINGS = {
-    # Model to use for classification
-    "CLASSIFICATION_MODEL": "llama3-8b-8192",
-    
-    # Model to use for response generation
-    "RESPONSE_MODEL": "llama3-8b-8192",
-    
-    # Classification categories
+    # Use OpenAI GPT-4o-mini instead of Groq
+    "CLASSIFICATION_MODEL": "gpt-4o-mini",
+    "RESPONSE_MODEL": "gpt-4o-mini",
+
     "CATEGORIES": ["Wanted Important", "Unwanted Important", "Promotions", "Updates", "Spam"],
 }
 
