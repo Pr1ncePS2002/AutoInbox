@@ -1,77 +1,115 @@
-Gmail Automation with AI
+# 📌 Title: AutoInbox(AI-Powered Gmail Automation)
 
-Automate your Gmail workflow using AI-powered agents. This project allows you to categorize emails, draft responses, and manage your inbox efficiently with minimal manual effort.
+## 🧠 Overview
 
-FEATURES
+This project is a Python-based system designed to automate various tasks within a Gmail account using the power of AI. It allows users to categorize emails, draft responses, organize their inbox, and perform other Gmail management functions. The system leverages libraries like `langgraph` for building AI workflows, Google API client libraries for interacting with Gmail, and optionally integrates with Groq for advanced AI capabilities. The project includes features for authentication, email retrieval, classification, response generation, and automated inbox management. It prioritizes efficiency, error handling, and compliance with Gmail API usage quotas through caching, rate limiting, and usage tracking.
 
-Automatically categorize incoming emails
+## ⚙️ Features
 
-Generate draft responses using AI
+*   **Automated Email Categorization:** Uses AI models to classify emails into predefined categories (e.g., "Wanted Important", "Unwanted Important").
+*   **AI-Powered Response Generation:** Generates draft responses to emails based on their content, using Groq or other LLMs.
+*   **Customizable Automation Rules:** Allows users to define rules for handling emails based on their classification,
+                                       such as moving them to specific labels or deleting them.
+    
+*   **Email Retrieval and Caching:** Efficiently fetches emails from Gmail, with caching to improve performance and reduce API calls.
+*   **Gmail API Interaction:** Provides robust functions for interacting with the Gmail API, including moving, deleting, and saving draft emails.
+*   **Rate Limiting and Error Handling:** Implements rate limiting, exponential backoff, and retry mechanisms to handle API errors and prevent exceeding quota limits.
+*   **Usage Monitoring:** Tracks Gmail API usage to ensure compliance with quota restrictions.
+*   **Automated Cleanup:** Offers a daily cleanup workflow to manage emails (e.g., delete old promotions).
+*   **Flexible Configuration:** Loads settings from a configuration file (e.g., `config/settings.py`) and environment variables for easy customization.
+*   **Batch Operations:** Utilizes batch operations for efficient processing of multiple emails.
+*   **Modular Design:** Organized with reusable modules for authentication, API interaction, email processing, and AI integration.
 
-Label and organize emails
+## 🛠️ Installation Steps
 
-Fully customizable automation rules
+1.  **Clone the Repository:**
 
-Easy integration with Gmail API
+    ```bash
+    git clone "https://github.com/Pr1ncePS2002/AutoInbox"  
+    cd AutoInbox>
+    ```
 
-INSTALLATION:
-Step 1:
-Clone the repository
-```
-git clone https://github.com/yourusername/gmail-automation.git
-cd gmail-automation
-```
-Step 2:
-Create a virtual environment
-```
-python -m venv venv
-source venv/bin/activate   # On Windows: venv\Scripts\activate
-```
-Step 3:
-Install dependencies
-```
-pip install -r requirements.txt
-```
-Step4:
-i) Set up Gmail API credentials
+2.  **Create a Virtual Environment:**
 
-ii) Go to Google Cloud Console
+    ```bash
+    python -m venv .venv
+    ```
 
-iii) Enable the Gmail API
+3.  **Activate the Virtual Environment:**
 
-iv) Create OAuth 2.0 credentials
+    *   **Linux/macOS:**
 
-Step 5:
-Download credentials.json and place it in the project root
+        ```bash
+        source .venv/bin/activate
+        ```
 
-USAGE
+    *   **Windows:**
 
-Run the main script:
-```
-python main.py
-```
+        ```bash
+        .venv\Scripts\activate
+        ```
 
-Follow the on-screen instructions to authenticate with your Gmail account. The AI agent will then start automating your inbox based on the rules you configure.
+4.  **Install Dependencies:**
 
-Configuration
+    ```bash
+    pip install -r requirements.txt  
+    ```
 
-Modify config.json to set your automation preferences
+    If no `requirements.txt` exists, install the key dependencies:
 
-Specify labels, categories, and response templates
+    ```bash
+    pip install google-api-python-client google-auth-httplib2 google-auth-oauthlib langgraph google-generativeai python-dotenv pydantic groq
+    ```
 
-Set the AI response model (e.g., GPT-4, GPT-4o-mini)
+5.  **Configure Gmail API Credentials:**
 
-DEPENDENCIES
+    *   Create a `credentials.json` file in the project's root directory.  This file is generated dynamically from environment variables by the authentication module.
+    *   Set the following environment variables (using a `.env` file or your system's environment variables):
 
-Python 3.10+
+        *   `CLIENT_ID`: Your Google API client ID.
+        *   `CLIENT_SECRET`: Your Google API client secret.
+        *   `REDIRECT_URI`: Your Google API redirect URI (e.g., `urn:ietf:wg:oauth:2.0:oob`).
 
-langgraph
+        Example `.env` file:
 
-google-api-python-client
+        ```
+        CLIENT_ID=YOUR_CLIENT_ID
+        CLIENT_SECRET=YOUR_CLIENT_SECRET
+        REDIRECT_URI=urn:ietf:wg:oauth:2.0:oob
+        GROQ_API_KEY=YOUR_GROQ_API_KEY # Optional, if using Groq
+        ```
 
-google-auth-httplib2
+6.  **Configure Settings:**
+    *   Create a `config/settings.py` file and modify the settings to match your preferences.
+    *   This file allows you to configure API settings, cache settings, email processing settings, LLM settings, and Gmail label IDs.
 
-google-auth-oauthlib
+## 🚀 How to Run / Usage Instructions
 
-Groq (for AI-generated responses)
+1.  **Run the Main Script:**
+
+    ```bash
+    python main.py
+    ```
+
+    *   The script will authenticate with your Gmail account, fetch new emails, classify them, and perform actions based on the configured automation rules.
+    *   You will be prompted in the terminal to grant access to your Gmail account the first time you run the script.
+
+2.  **Modify Configuration:**
+
+    *   Adjust settings in the `config/settings.py` file to customize email categories, response templates, AI models, and automation preferences.
+    *   Update the `.env` file with your API keys and credentials.
+
+3.  **Monitor and Review Logs:**
+
+    *   The script logs API calls and errors to both the console and a log file (specified in the logging configuration).
+    *   Regularly review the logs to monitor the system's behavior, identify any issues, and track API usage.
+
+4.  **Available Workflows:**
+
+    *   `process_new_emails`: This workflow is actively invoked. It fetches new emails, classifies them, and routes them to different actions.
+    *   `process_existing_emails`: This workflow is commented out and is designed to process existing emails based on a count specified by a command-line argument.
+    *   `daily_cleanup`: This workflow is commented out and is designed to be executed daily for cleanup tasks.
+
+
+
 
