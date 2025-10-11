@@ -1,7 +1,7 @@
 from langgraph.graph import StateGraph
 from gmail_utils.fetch import fetch_existing_emails
 from gmail_utils.actions import move_email, delete_email, batch_move_emails, batch_delete_emails
-from llm_utils.classifier import classify_email, needs_response
+# from llm_utils.classifier import classify_email, needs_response
 from llm_utils.summarizer import summarize_email
 from gmail_utils.retry import retry_on_api_error, safe_api_call
 from gmail_utils.monitor import track_api_call, get_quota_monitor
@@ -9,6 +9,7 @@ from config.settings import EMAIL_SETTINGS, GMAIL_LABELS, API_SETTINGS
 from datetime import datetime, timedelta, timezone
 from pydantic import BaseModel
 from typing import List, Optional, Dict
+from llm_utils.classifier import categorize_email, check_if_reply_needed
 import time
 import logging
 
@@ -53,7 +54,7 @@ def fetch_existing_emails_node(state: EmailState):
 
 @track_api_call("classify_emails_workflow", quota_cost=1)
 def classify_emails_node(state: EmailState):
-    """Classify emails with summarization to reduce token usage."""
+    """Classify emails with a two-step process."""
     classified = []
     if not state.emails:
         logger.warning("No emails to classify")
@@ -61,19 +62,20 @@ def classify_emails_node(state: EmailState):
     
     logger.info(f"Classifying {len(state.emails)} emails")
     for email in state.emails:
-        # Add delay to prevent rate limiting, but use a smaller delay
-        time.sleep(API_SETTINGS["API_CALL_DELAY"] * 20)  # 2 seconds if default is 0.1
+        time.sleep(API_SETTINGS["API_CALL_DELAY"] * 20)
         
         try:
-            # Use summarization to reduce token usage
-            if EMAIL_SETTINGS["USE_SUMMARIZATION"]:
-                summarized = summarize_email(email["subject"], email["body"])
-                label = classify_email(summarized["subject"], summarized["body"])
-            else:
-                label = classify_email(email["subject"], email["body"])
-                
-            classified.append({**email, "label": label})
-            logger.debug(f"Classified email {email['id']} as {label}")
+            # Step 1: Broad Categorization
+            category = categorize_email(email["subject"], email["body"])
+            final_label = category
+
+            # Step 2: If it's important, check if a reply is needed
+            if category == "Important":
+                importance_label = check_if_reply_needed(email["subject"], email["body"])
+                final_label = importance_label
+
+            classified.append({**email, "label": final_label})
+            logger.debug(f"Classified email {email['id']} as {final_label}")
         except Exception as e:
             logger.error(f"Error classifying email {email['id']}: {e}")
             continue

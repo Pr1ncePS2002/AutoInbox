@@ -1,106 +1,88 @@
-"""
-Email summarization utilities to reduce token usage in classification.
-"""
 import re
-from groq import Groq
-from dotenv import load_dotenv
 import os
+from dotenv import load_dotenv
+# from groq import Groq
+from openai import OpenAI
+from config.settings import LLM_SETTINGS, EMAIL_SETTINGS
 
 load_dotenv()
-client = Groq(api_key=os.getenv("GROQ_API_KEY"))
+
+# client = Groq(api_key=os.getenv("GROQ_API_KEY"))
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+CLASSIFICATION_MODEL = LLM_SETTINGS.get("CLASSIFICATION_MODEL", "gpt-4o-mini")
+AI_SUMMARY_MAX_TOKENS = EMAIL_SETTINGS.get("AI_SUMMARY_MAX_TOKENS", 150)
 
 def basic_summarize(text, max_length=300):
-    """
-    Basic text summarization without API calls.
-    Uses simple heuristics to extract the most important parts of an email.
-    """
     if not text or len(text) <= max_length:
         return text
-    
-    # Remove quoted replies (common in emails)
+
     lines = text.split('\n')
     cleaned_lines = []
     for line in lines:
         if not line.strip().startswith('>') and not re.match(r'^On .* wrote:$', line.strip()):
             cleaned_lines.append(line)
-    
+
     cleaned_text = '\n'.join(cleaned_lines)
-    
-    # If still too long, extract key sentences
+
     if len(cleaned_text) > max_length:
-        # Split into sentences
         sentences = re.split(r'(?<=[.!?])\s+', cleaned_text)
-        
-        # Prioritize sentences with question marks or important keywords
-        important_sentences = []
-        for sentence in sentences:
-            if '?' in sentence or any(keyword in sentence.lower() for keyword in 
-                                     ['urgent', 'important', 'please', 'request', 'need', 'help',
-                                      'question', 'deadline', 'asap', 'required']):
-                important_sentences.append(sentence)
-        
-        # Add first and last sentences if not already included
+        important_sentences = [
+            s for s in sentences if '?' in s or 
+            any(k in s.lower() for k in ['urgent', 'important', 'please', 'request', 'need', 'help', 'question', 'deadline', 'asap', 'required'])
+        ]
         if sentences and sentences[0] not in important_sentences:
             important_sentences.insert(0, sentences[0])
         if sentences and sentences[-1] not in important_sentences:
             important_sentences.append(sentences[-1])
         
-        # If we have important sentences, use them
-        if important_sentences:
-            summary = ' '.join(important_sentences)
-            if len(summary) <= max_length:
-                return summary
-        
-        # If still too long or no important sentences, take first part and last part
-        first_part = cleaned_text[:max_length//2]
-        last_part = cleaned_text[-max_length//2:]
+        summary = ' '.join(important_sentences)
+        if len(summary) <= max_length:
+            return summary
+
+        first_part = cleaned_text[:max_length // 2]
+        last_part = cleaned_text[-max_length // 2:]
         return first_part + "..." + last_part
-    
+
     return cleaned_text
 
-def ai_summarize(text, max_tokens=150):
-    """
-    Use AI to summarize longer emails.
-    Only use for emails that are very long to avoid unnecessary API calls.
-    """
-    # Only use AI summarization for very long emails
+def ai_summarize(text, max_tokens=AI_SUMMARY_MAX_TOKENS):
     if len(text) < 1000:
         return basic_summarize(text)
-    
-    prompt = f"""
-    Summarize the following email in a concise way that preserves the main points, 
-    questions, and requests. Keep your summary under {max_tokens} tokens.
-    
+
+    prompt_content = f"""
+    Summarize the following email clearly and concisely, preserving the main points,
+    questions, and any action items. Keep the summary under {max_tokens} tokens.
+
     EMAIL:
     {text}
-    
+
     SUMMARY:
     """
     
     try:
-        resp = client.chat.completions.create(
-            model="llama3-8b-8192",
-            messages=[{"role": "user", "content": prompt}],
-            max_tokens=max_tokens
+        chat_completion = client.chat.completions.create(
+            messages=[{"role": "user", "content": prompt_content}],
+            model=CLASSIFICATION_MODEL,
         )
-        return resp.choices[0].message.content.strip()
+        return chat_completion.choices[0].message.content.strip()
+
     except Exception as e:
-        print(f"Error in AI summarization: {e}")
-        # Fall back to basic summarization
+        print(f"⚠️ Error in AI summarization: {e}")
         return basic_summarize(text)
 
-def summarize_email(subject, body, use_ai=False):
+# In llm_utils/summarizer.py
+
+def summarize_email(subject, body, use_ai=False, max_length=300):
     """
     Summarize an email for classification purposes.
     Combines subject and summarized body to reduce token usage.
     """
-    # Subject is usually important, keep it intact
-    # For body, use either basic or AI summarization
     if use_ai and len(body) > 1000:
         summarized_body = ai_summarize(body)
     else:
-        summarized_body = basic_summarize(body)
-    
+        # Pass the max_length argument down to the basic summarizer
+        summarized_body = basic_summarize(body, max_length=max_length)
+
     return {
         "subject": subject,
         "body": summarized_body

@@ -2,7 +2,7 @@ from typing import List, Optional
 from langgraph.graph import StateGraph
 from gmail_utils.fetch import fetch_new_emails
 from gmail_utils.actions import move_email, save_draft, batch_move_emails
-from llm_utils.classifier import classify_email, needs_response
+from llm_utils.classifier import categorize_email, check_if_reply_needed
 from pydantic import BaseModel
 import time # Import the time module
 
@@ -28,29 +28,42 @@ def fetch_emails_node(state: EmailState):
     return {"emails": emails}
 
 def classify_emails_node(state: EmailState):
+    """Classify new emails to determine if a reply is needed."""
     classified = []
     if state.emails:
         for email in state.emails:
-            # Add a 2-second delay to comply with the quota but optimize for performance
-            time.sleep(2) 
+            time.sleep(5)
+            final_label = "Unwanted Important" # Default label
+            needs_reply = False
             
             try:
-                # Use the new classification system
-                label = classify_email(email["subject"], email["body"])
-                needs_reply = label.strip().lower() == "wanted important"
+                # Step 1: Broad categorization
+                category = categorize_email(email["subject"], email["body"])
+
+                # Step 2: If category is Important, check if a reply is needed
+                if category == "Important":
+                    final_label = check_if_reply_needed(email["subject"], email["body"])
+                else:
+                    final_label = category # It's Promotions, Updates, etc.
+
+                print(f"Subject: '{email['subject']}' ---> Classified as: '{final_label.strip()}'")
+
+                if final_label.strip().lower() == "wanted important":
+                    needs_reply = True
+                
                 classified.append({
                     **email, 
-                    "label": label,
+                    "label": final_label,
                     "needs_reply": needs_reply
                 })
             except Exception as e:
                 print(f"Error classifying email {email['id']}: {e}")
-                # Add with default classification on error
                 classified.append({
                     **email, 
                     "label": "Unwanted Important",
                     "needs_reply": False
                 })
+
     return {"classified_emails": classified}
 
 def route_action(state: EmailState):
