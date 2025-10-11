@@ -76,6 +76,7 @@ This project is a Python-based system designed to automate various tasks within 
         CLIENT_ID=YOUR_CLIENT_ID
         CLIENT_SECRET=YOUR_CLIENT_SECRET
         REDIRECT_URI=urn:ietf:wg:oauth:2.0:oob
+        OPENAI_API_KEY=YOUR_API_KEY
         GROQ_API_KEY=YOUR_GROQ_API_KEY # Optional, if using Groq
         ```
 
