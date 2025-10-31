@@ -10,6 +10,8 @@ import time
 import logging
 from googleapiclient.errors import HttpError
 from googleapiclient.http import BatchHttpRequest
+from gmail_utils.attachments import process_message_attachments
+from config.settings import ATTACHMENT_SETTINGS
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -56,32 +58,24 @@ def _extract_email_content(message):
         "to_email": to_email
     }
 
+
 def _get_cached_emails(cache_key, max_age=EMAIL_CACHE_TTL):
-    """Get emails from cache if available and not expired."""
-    cache_file = os.path.join(CACHE_DIR, f"{cache_key}.json")
-    
-    if os.path.exists(cache_file):
-        # Check if cache is still valid
-        if time.time() - os.path.getmtime(cache_file) < max_age:
-            try:
-                with open(cache_file, 'r') as f:
+    cache_path = os.path.join(CACHE_DIR, f"{cache_key}.json")
+    if os.path.exists(cache_path):
+        age = time.time() - os.path.getmtime(cache_path)
+        if age < max_age:
+            with open(cache_path, "r", encoding="utf-8") as f:
+                try:
                     return json.load(f)
-            except (json.JSONDecodeError, IOError):
-                # If cache file is corrupted, ignore it
-                pass
-    
+                except Exception:
+                    return None
     return None
 
+
 def _save_emails_to_cache(emails, cache_key):
-    """Save emails to cache."""
-    cache_file = os.path.join(CACHE_DIR, f"{cache_key}.json")
-    
-    try:
-        with open(cache_file, 'w') as f:
-            json.dump(emails, f)
-    except IOError:
-        # If we can't write to cache, just continue without caching
-        pass
+    cache_path = os.path.join(CACHE_DIR, f"{cache_key}.json")
+    with open(cache_path, "w", encoding="utf-8") as f:
+        json.dump(emails, f, ensure_ascii=False)
 
 @retry_on_api_error()
 @track_api_call("fetch_existing_emails", quota_cost=5)
@@ -100,8 +94,8 @@ def fetch_existing_emails(max_results=EMAIL_SETTINGS["DEFAULT_EMAIL_COUNT"], use
     
     logger.info(f"Fetching {max_results} existing emails from Gmail API")
     service = get_gmail_service()
-    days_ago = (datetime.utcnow() - timedelta(days=EMAIL_SETTINGS["DAYS_LOOKBACK"])).strftime("%Y/%m/%d")
-    query = f"after:{days_ago}"
+    days_ago = (datetime.utcnow() - timedelta(days=EMAIL_SETTINGS["DAYS_LOOKBACK"]))
+    query = f"after:{days_ago.strftime('%Y/%m/%d')}"
 
     try:
         # Use fields parameter to only fetch the data we need
@@ -122,6 +116,7 @@ def fetch_existing_emails(max_results=EMAIL_SETTINGS["DEFAULT_EMAIL_COUNT"], use
         # Use batch requests to reduce API calls
         emails = []
         batch_size = 10  # Process in batches of 10
+        include_attachments = ATTACHMENT_SETTINGS.get("INCLUDE_IN_CONTEXT", True)
         
         for i in range(0, len(message_ids), batch_size):
             batch_ids = message_ids[i:i+batch_size]
@@ -136,12 +131,19 @@ def fetch_existing_emails(max_results=EMAIL_SETTINGS["DEFAULT_EMAIL_COUNT"], use
                     ).execute()
                     
                     email_data = _extract_email_content(m)
+                    # Extract attachments content
+                    att_text, att_meta = process_message_attachments(service, m)
+                    email_data["attachments_text"] = att_text
+                    email_data["attachments_meta"] = att_meta
+                    if include_attachments and att_text:
+                        # Append attachment text to body for richer context
+                        email_data["body"] = f"{email_data['body']}\n\n{att_text}".strip()
                     emails.append(email_data)
                     
                     # Add small delay between requests to avoid rate limiting
-                    time.sleep(0.1)
+                    time.sleep(API_SETTINGS.get("API_CALL_DELAY", 0.1))
                 except HttpError as error:
-                    print(f"Error fetching message {msg_id}: {error}")
+                    logger.warning(f"Error fetching message {msg_id}: {error}")
                     continue
         
         # Save to cache for future use
@@ -151,14 +153,15 @@ def fetch_existing_emails(max_results=EMAIL_SETTINGS["DEFAULT_EMAIL_COUNT"], use
         return emails
     
     except HttpError as error:
-        print(f"An error occurred: {error}")
+        logger.error(f"An error occurred: {error}")
         return []
+
 
 def fetch_new_emails(max_results=5, use_cache=False):
     """Fetch new (unread) emails from Gmail."""
     # For unread emails, we use a shorter cache time or no cache
     cache_key = "unread_emails"
-    cache_ttl = 300  # 5 minutes for unread emails
+    cache_ttl = CACHE_SETTINGS.get("UNREAD_CACHE_TTL", 300)
     
     if use_cache:
         cached_emails = _get_cached_emails(cache_key, cache_ttl)
@@ -180,6 +183,7 @@ def fetch_new_emails(max_results=5, use_cache=False):
         
         # Use batch requests to reduce API calls
         emails = []
+        include_attachments = ATTACHMENT_SETTINGS.get("INCLUDE_IN_CONTEXT", True)
         
         for msg_id in message_ids:
             try:
@@ -190,12 +194,18 @@ def fetch_new_emails(max_results=5, use_cache=False):
                 ).execute()
                 
                 email_data = _extract_email_content(m)
+                # Extract attachments content
+                att_text, att_meta = process_message_attachments(service, m)
+                email_data["attachments_text"] = att_text
+                email_data["attachments_meta"] = att_meta
+                if include_attachments and att_text:
+                    email_data["body"] = f"{email_data['body']}\n\n{att_text}".strip()
                 emails.append(email_data)
                 
                 # Add small delay between requests to avoid rate limiting
-                time.sleep(0.1)
+                time.sleep(API_SETTINGS.get("API_CALL_DELAY", 0.1))
             except HttpError as error:
-                print(f"Error fetching message {msg_id}: {error}")
+                logger.warning(f"Error fetching message {msg_id}: {error}")
                 continue
         
         # Save to cache for future use if enabled
@@ -205,5 +215,5 @@ def fetch_new_emails(max_results=5, use_cache=False):
         return emails
     
     except HttpError as error:
-        print(f"An error occurred: {error}")
+        logger.error(f"An error occurred: {error}")
         return []
