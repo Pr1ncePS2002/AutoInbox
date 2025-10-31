@@ -1,89 +1,81 @@
-import re
+"""
+Email summarization utilities to reduce token usage and provide context.
+Includes basic heuristic summarization and optional AI-powered summarization.
+"""
+
 import os
+from typing import Optional
 from dotenv import load_dotenv
-# from groq import Groq
-from openai import OpenAI
-from config.settings import LLM_SETTINGS, EMAIL_SETTINGS
+from config.settings import EMAIL_SETTINGS
+
+# Attempt to use OpenAI for AI summarization, fallback gracefully if unavailable
+try:
+    from openai import OpenAI
+except Exception:
+    OpenAI = None
 
 load_dotenv()
 
-# client = Groq(api_key=os.getenv("GROQ_API_KEY"))
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-CLASSIFICATION_MODEL = LLM_SETTINGS.get("CLASSIFICATION_MODEL", "gpt-4o-mini")
+SUMMARY_MAX_LENGTH = EMAIL_SETTINGS.get("SUMMARY_MAX_LENGTH", 300)
+AI_SUMMARY_THRESHOLD = EMAIL_SETTINGS.get("AI_SUMMARY_THRESHOLD", 1000)
 AI_SUMMARY_MAX_TOKENS = EMAIL_SETTINGS.get("AI_SUMMARY_MAX_TOKENS", 150)
 
-def basic_summarize(text, max_length=300):
-    if not text or len(text) <= max_length:
-        return text
 
-    lines = text.split('\n')
-    cleaned_lines = []
-    for line in lines:
-        if not line.strip().startswith('>') and not re.match(r'^On .* wrote:$', line.strip()):
-            cleaned_lines.append(line)
+def basic_summarize(text: str, max_length: int = SUMMARY_MAX_LENGTH) -> str:
+    """Heuristic-based summarization: returns the first N chars and trims noise."""
+    if not text:
+        return ""
+    # Simple heuristic: collapse whitespace, trim signatures and replies markers
+    cleaned = " ".join(text.split())
+    # Truncate to max_length
+    if len(cleaned) > max_length:
+        cleaned = cleaned[:max_length].rstrip() + "…"
+    return cleaned
 
-    cleaned_text = '\n'.join(cleaned_lines)
 
-    if len(cleaned_text) > max_length:
-        sentences = re.split(r'(?<=[.!?])\s+', cleaned_text)
-        important_sentences = [
-            s for s in sentences if '?' in s or 
-            any(k in s.lower() for k in ['urgent', 'important', 'please', 'request', 'need', 'help', 'question', 'deadline', 'asap', 'required'])
-        ]
-        if sentences and sentences[0] not in important_sentences:
-            important_sentences.insert(0, sentences[0])
-        if sentences and sentences[-1] not in important_sentences:
-            important_sentences.append(sentences[-1])
-        
-        summary = ' '.join(important_sentences)
-        if len(summary) <= max_length:
-            return summary
+def ai_summarize(text: str, system_hint: Optional[str] = None) -> str:
+    """AI-powered summarization using OpenAI if configured; otherwise fallback."""
+    if not text:
+        return ""
 
-        first_part = cleaned_text[:max_length // 2]
-        last_part = cleaned_text[-max_length // 2:]
-        return first_part + "..." + last_part
-
-    return cleaned_text
-
-def ai_summarize(text, max_tokens=AI_SUMMARY_MAX_TOKENS):
-    if len(text) < 1000:
+    # If text is short, use basic summary
+    if len(text) < AI_SUMMARY_THRESHOLD:
         return basic_summarize(text)
 
-    prompt_content = f"""
-    Summarize the following email clearly and concisely, preserving the main points,
-    questions, and any action items. Keep the summary under {max_tokens} tokens.
+    # Use OpenAI client if available and key is set
+    api_key = os.getenv("OPENAI_API_KEY")
+    if OpenAI is None or not api_key:
+        return basic_summarize(text, max_length=SUMMARY_MAX_LENGTH)
 
-    EMAIL:
-    {text}
-
-    SUMMARY:
-    """
-    
     try:
-        chat_completion = client.chat.completions.create(
-            messages=[{"role": "user", "content": prompt_content}],
-            model=CLASSIFICATION_MODEL,
+        client = OpenAI(api_key=api_key)
+        messages = []
+        if system_hint:
+            messages.append({"role": "system", "content": system_hint})
+        messages.append({
+            "role": "user",
+            "content": (
+                "Summarize the following email content into a concise, factual "
+                "summary capturing key actions, dates, amounts, and obligations.\n\n" + text
+            ),
+        })
+        chat = client.chat.completions.create(
+            model=os.getenv("OPENAI_SUMMARY_MODEL", "gpt-4o-mini"),
+            temperature=0.0,
+            max_tokens=AI_SUMMARY_MAX_TOKENS,
+            messages=messages,
         )
-        return chat_completion.choices[0].message.content.strip()
+        return chat.choices[0].message.content.strip()
+    except Exception:
+        # In case of any error, fallback to basic
+        return basic_summarize(text, max_length=SUMMARY_MAX_LENGTH)
 
-    except Exception as e:
-        print(f"⚠️ Error in AI summarization: {e}")
-        return basic_summarize(text)
 
-# In llm_utils/summarizer.py
-
-def summarize_email(subject, body, use_ai=False, max_length=300):
-    """
-    Summarize an email for classification purposes.
-    Combines subject and summarized body to reduce token usage.
-    """
-    if use_ai and len(body) > 1000:
-        summarized_body = ai_summarize(body)
-    else:
-        # Pass the max_length argument down to the basic summarizer
-        summarized_body = basic_summarize(body, max_length=max_length)
-
-    return {
-        "subject": subject,
-        "body": summarized_body
-    }
+def summarize_email(subject: str, body: str) -> str:
+    """Summarize an email using heuristic or AI based on size."""
+    # Combine subject and body for better context
+    combined = (subject or "") + "\n\n" + (body or "")
+    # Decide summarization path using thresholds
+    if len(combined) >= AI_SUMMARY_THRESHOLD:
+        return ai_summarize(combined, system_hint="You are summarizing email content for triage.")
+    return basic_summarize(combined, max_length=SUMMARY_MAX_LENGTH)
