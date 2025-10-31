@@ -60,26 +60,58 @@ EMAIL_SETTINGS = {
     "AI_SUMMARY_MAX_TOKENS": 150,
 }
 
+# Attachment Processing Settings
+ATTACHMENT_SETTINGS = {
+    # Maximum attachment size to process (bytes)
+    "MAX_SIZE_BYTES": 10 * 1024 * 1024,  # 10 MB
+    
+    # Supported MIME types
+    "SUPPORTED_MIME_TYPES": [
+        "application/pdf",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",  # .docx
+        "application/msword",  # legacy .doc
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",  # .xlsx
+        "application/vnd.ms-excel"  # legacy .xls
+    ],
+    
+    # Maximum text length to include from attachments
+    "MAX_TEXT_LENGTH": 4000,
+    
+    # Whether to include attachment text in classification context
+    "INCLUDE_IN_CONTEXT": True,
+}
+
 # LLM Settings
-# config/settings.py
-
-# LLM_SETTINGS = {
-#     # Model to use for classification
-#     "CLASSIFICATION_MODEL": "llama-3.1-8b-instant",
-    
-#     # Model to use for response generation
-#     "RESPONSE_MODEL": "llama-3.1-8b-instant",
-    
-#     # Classification categories
-#     "CATEGORIES": ["Wanted Important", "Unwanted Important", "Promotions", "Updates", "Spam"],
-# }
-
 LLM_SETTINGS = {
     # Use OpenAI GPT-4o-mini instead of Groq
     "CLASSIFICATION_MODEL": "gpt-4o-mini",
     "RESPONSE_MODEL": "gpt-4o-mini",
 
     "CATEGORIES": ["Wanted Important", "Unwanted Important", "Promotions", "Updates", "Spam"],
+}
+
+# Classification Cache Settings
+CLASSIFICATION_CACHE_SETTINGS = {
+    # Cache file for storing classified emails
+    "CACHE_FILE": "cache/classification_cache.json",
+    
+    # Similarity threshold for cache matching (0.0 to 1.0)
+    "SIMILARITY_THRESHOLD": 0.85,
+    
+    # Maximum number of cached classifications to keep
+    "MAX_CACHE_SIZE": 1000,
+    
+    # TTL for cached classifications in seconds (7 days)
+    "CACHE_TTL": 7 * 24 * 3600,
+    
+    # Whether to use classification caching
+    "ENABLED": True,
+    
+    # Minimum content length to cache (avoid caching very short emails)
+    "MIN_CONTENT_LENGTH": 50,
+    
+    # Maximum content length to compare (truncate very long emails for similarity)
+    "MAX_CONTENT_LENGTH": 2000,
 }
 
 # Gmail Label IDs
