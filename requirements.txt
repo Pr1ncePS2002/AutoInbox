@@ -6,3 +6,9 @@ google-generativeai
 python-dotenv
 pydantic
 groq
+openai
+pdfminer.six
+python-docx
+openpyxl
+scikit-learn
+numpy
