@@ -1,0 +1,390 @@
+[
+  {
+    "subject": "50% Off on Your Next Purchase!",
+    "body": "Enjoy a flat 50% discount on all electronics this weekend. Offer valid till Sunday. Don’t miss out on exclusive deals just for you!",
+    "label": "promotions"
+  },
+  {
+    "subject": "Flash Sale: Buy One Get One Free",
+    "body": "Our limited-time flash sale is live. Buy one item and get another free across all fashion categories. Sale ends tonight!",
+    "label": "promotions"
+  },
+  {
+    "subject": "Special Festive Offer from DailyMart",
+    "body": "Celebrate this festival season with 40% off groceries and free delivery for all premium users. Hurry, offer ends soon!",
+    "label": "promotions"
+  },
+  {
+    "subject": "Get 3 Months of Premium Music Free",
+    "body": "Activate your free trial today and enjoy ad-free music streaming for 90 days. Cancel anytime before renewal.",
+    "label": "promotions"
+  },
+  {
+    "subject": "Exclusive Access to Our New Collection",
+    "body": "Explore our latest summer collection before anyone else. Members get early access and 20% off on all new arrivals.",
+    "label": "promotions"
+  },
+  {
+    "subject": "Big Billion Sale is Live Now",
+    "body": "Grab your favorite gadgets, home appliances, and fashion items at unbelievable prices during our Big Billion Sale.",
+    "label": "promotions"
+  },
+  {
+    "subject": "Refer & Earn Rewards Instantly",
+    "body": "Invite your friends to join our app and earn ₹500 for each successful referral. Start sharing today!",
+    "label": "promotions"
+  },
+  {
+    "subject": "Your Favorite Pizza at 30% Off",
+    "body": "Order your favorite pizza today and enjoy a 30% discount with code PIZZA30. Offer valid for online orders only.",
+    "label": "promotions"
+  },
+  {
+    "subject": "Free Gift on First Order!",
+    "body": "Sign up on our website and get a complimentary welcome gift with your first order. Limited offer.",
+    "label": "promotions"
+  },
+  {
+    "subject": "Double Cashback Weekend!",
+    "body": "Earn double the cashback on all purchases this weekend using our credit card. Terms apply.",
+    "label": "promotions"
+  },
+  {
+    "subject": "Introducing SmartFit Pro Watch",
+    "body": "Track your health, sleep, and workouts with our all-new SmartFit Pro. Pre-order now and save ₹2000.",
+    "label": "promotions"
+  },
+  {
+    "subject": "Free Delivery for a Week!",
+    "body": "Order from our app this week and enjoy unlimited free deliveries on all items above ₹299.",
+    "label": "promotions"
+  },
+  {
+    "subject": "Mega Clearance Sale – Up to 80% Off",
+    "body": "Shop from thousands of products at up to 80% off. Limited stock, grab your favorites before they’re gone.",
+    "label": "promotions"
+  },
+  {
+    "subject": "Subscribe Now and Save 20%",
+    "body": "Join our monthly subscription plan and save 20% on your recurring orders. Cancel anytime.",
+    "label": "promotions"
+  },
+  {
+    "subject": "Unlock Premium Features for Free",
+    "body": "Upgrade your account to premium and enjoy 7 days free access to all exclusive tools and analytics.",
+    "label": "promotions"
+  },
+  {
+    "subject": "Monsoon Bonanza – Flat ₹500 Off",
+    "body": "Enjoy flat ₹500 off on your next shopping above ₹3000. Use code MONSOON500 during checkout.",
+    "label": "promotions"
+  },
+  {
+    "subject": "Discounted Health Check Packages",
+    "body": "Get a full-body health check-up at 30% discount this month. Partnered with top diagnostic centers.",
+    "label": "promotions"
+  },
+  {
+    "subject": "Your Free Trial Ends Soon",
+    "body": "Your free trial for StreamIt Premium expires in 2 days. Subscribe now to continue enjoying your favorite shows uninterrupted.",
+    "label": "promotions"
+  },
+  {
+    "subject": "Exclusive Deal for Returning Customers",
+    "body": "We’re happy to have you back! Enjoy 25% off your next purchase as a token of appreciation.",
+    "label": "promotions"
+  },
+  {
+    "subject": "Limited Period Offer on Cloud Storage",
+    "body": "Upgrade to our premium cloud plan and get 2TB of storage at 50% off for the first year.",
+    "label": "promotions"
+  },
+
+  {
+    "subject": "System Maintenance Scheduled for Tonight",
+    "body": "We’ll be performing routine maintenance on our servers from 12 AM to 2 AM. Some services may be temporarily unavailable.",
+    "label": "updates"
+  },
+  {
+    "subject": "Policy Update: Data Privacy Enhancements",
+    "body": "We’ve updated our data privacy policy to improve transparency and comply with new regulations. Review the updated terms here.",
+    "label": "updates"
+  },
+  {
+    "subject": "App Version 2.1 Released",
+    "body": "We’ve launched a new version of our app featuring performance improvements and bug fixes. Update now from the Play Store.",
+    "label": "updates"
+  },
+  {
+    "subject": "Payment System Downtime Notification",
+    "body": "Our payment gateway will be temporarily offline for upgrades between 1 AM and 3 AM. We apologize for the inconvenience.",
+    "label": "updates"
+  },
+  {
+    "subject": "New Security Feature Added",
+    "body": "Two-factor authentication is now available for all users. Enable it in settings to secure your account.",
+    "label": "updates"
+  },
+  {
+    "subject": "Your Subscription Has Been Renewed",
+    "body": "Your annual plan has been successfully renewed. Thank you for staying with us!",
+    "label": "updates"
+  },
+  {
+    "subject": "Important Change to Service Hours",
+    "body": "Our customer support hours have changed to 9 AM – 7 PM. We appreciate your understanding.",
+    "label": "updates"
+  },
+  {
+    "subject": "API Deprecation Notice",
+    "body": "Version 1 of our API will be deprecated on June 30th. Please migrate to version 2 to avoid service interruptions.",
+    "label": "updates"
+  },
+  {
+    "subject": "New Dashboard Features Added",
+    "body": "We’ve introduced real-time analytics and improved navigation in the latest update. Try it now.",
+    "label": "updates"
+  },
+  {
+    "subject": "Your Delivery Address Has Been Updated",
+    "body": "We’ve successfully updated your delivery address as requested. Review your details in your account settings.",
+    "label": "updates"
+  },
+  {
+    "subject": "Your Monthly Statement is Ready",
+    "body": "Your statement for October is now available. Log in to view your transaction summary.",
+    "label": "updates"
+  },
+  {
+    "subject": "Password Change Confirmation",
+    "body": "Your password was successfully changed on your account. If this wasn’t you, reset your password immediately.",
+    "label": "updates"
+  },
+  {
+    "subject": "Billing Information Updated Successfully",
+    "body": "We’ve updated your payment information as requested. Your next cycle will use the new card details.",
+    "label": "updates"
+  },
+  {
+    "subject": "Service Interruption Resolved",
+    "body": "The connectivity issue reported earlier today has been resolved. All systems are operational now.",
+    "label": "updates"
+  },
+  {
+    "subject": "Security Alert: Login from New Device",
+    "body": "We detected a login from an unfamiliar device. If this was not you, please secure your account immediately.",
+    "label": "updates"
+  },
+  {
+    "subject": "Scheduled Database Upgrade",
+    "body": "Our systems will undergo a database upgrade this weekend to improve reliability and speed.",
+    "label": "updates"
+  },
+  {
+    "subject": "Storage Limit Exceeded",
+    "body": "You’ve reached your cloud storage limit. Delete old files or upgrade your plan to continue syncing.",
+    "label": "updates"
+  },
+  {
+    "subject": "Service Restoration Notification",
+    "body": "We’re pleased to inform you that our email delivery system is fully restored after scheduled maintenance.",
+    "label": "updates"
+  },
+  {
+    "subject": "Account Verification Reminder",
+    "body": "Please verify your account to continue using all features without interruption.",
+    "label": "updates"
+  },
+  {
+    "subject": "New Login Activity Detected",
+    "body": "Your account was accessed from a new browser. Review your activity for security assurance.",
+    "label": "updates"
+  },
+
+  {
+    "subject": "Meeting Rescheduled to Tomorrow",
+    "body": "The project sync-up meeting has been rescheduled to tomorrow at 10 AM due to client availability.",
+    "label": "important"
+  },
+  {
+    "subject": "Project AutoInbox Status Report",
+    "body": "Attached is the latest progress update for AutoInbox. Please review the pending tasks before the next review meeting.",
+    "label": "important"
+  },
+  {
+    "subject": "Urgent: Server Downtime Alert",
+    "body": "The production server is currently down. The tech team is investigating. Updates will follow shortly.",
+    "label": "important"
+  },
+  {
+    "subject": "Invoice Payment Reminder",
+    "body": "Your invoice #1042 is due in 2 days. Please make the payment to avoid service interruption.",
+    "label": "important"
+  },
+  {
+    "subject": "Action Required: Policy Compliance",
+    "body": "Please review and sign the new compliance policy by end of the day to ensure continued access to internal systems.",
+    "label": "important"
+  },
+  {
+    "subject": "Team Meeting Agenda for Next Week",
+    "body": "Please find attached the agenda for next week’s strategy meeting. Come prepared with your project updates.",
+    "label": "important"
+  },
+  {
+    "subject": "Security Patch Deployment Notice",
+    "body": "A critical security patch will be deployed tonight. Expect short downtime during the rollout window.",
+    "label": "important"
+  },
+  {
+    "subject": "Reminder: Submit Timesheet",
+    "body": "Please submit your weekly timesheet before 6 PM today to avoid payroll delays.",
+    "label": "important"
+  },
+  {
+    "subject": "Performance Review Scheduled",
+    "body": "Your quarterly performance review is scheduled for next Monday at 3 PM. Please prepare your project summary.",
+    "label": "important"
+  },
+  {
+    "subject": "Deadline Extended for Report Submission",
+    "body": "The submission deadline for the quarterly report has been extended by two days. Ensure completion by Friday.",
+    "label": "important"
+  },
+  {
+    "subject": "Server Backup Completed Successfully",
+    "body": "The full system backup was completed successfully last night. No errors were reported.",
+    "label": "important"
+  },
+  {
+    "subject": "Reminder: Client Presentation Tomorrow",
+    "body": "Please finalize your presentation slides and join the review call today at 4 PM.",
+    "label": "important"
+  },
+  {
+    "subject": "Budget Approval Pending",
+    "body": "The finance department is awaiting your approval for Q4 budget allocation. Please review the attached file.",
+    "label": "important"
+  },
+  {
+    "subject": "Password Expiry Notice",
+    "body": "Your corporate account password will expire in 3 days. Change it now to avoid login issues.",
+    "label": "important"
+  },
+  {
+    "subject": "Important: Laptop Return Reminder",
+    "body": "If you’re offboarding this week, please return your company laptop to IT by Friday evening.",
+    "label": "important"
+  },
+  {
+    "subject": "Critical Patch Required for System Security",
+    "body": "A new OS vulnerability has been detected. Apply the critical patch immediately to ensure compliance.",
+    "label": "important"
+  },
+  {
+    "subject": "Weekly Report Submission Reminder",
+    "body": "Don’t forget to upload your weekly status report to the shared drive by 5 PM.",
+    "label": "important"
+  },
+  {
+    "subject": "Password Breach Alert",
+    "body": "Unusual login attempts detected on your work email. Reset your password immediately for safety.",
+    "label": "important"
+  },
+
+  {
+    "subject": "Congratulations! You’ve Won a Free iPhone",
+    "body": "Click the link below to claim your free iPhone 15 now! Hurry, offer expires soon.",
+    "label": "spam"
+  },
+  {
+    "subject": "Earn ₹10,000 Per Week Working from Home",
+    "body": "Join our exclusive work-from-home program today and start earning instantly. No experience needed!",
+    "label": "spam"
+  },
+  {
+    "subject": "Your Account is Suspended! Verify Now",
+    "body": "Your account will be permanently closed if not verified in 24 hours. Click here to restore access.",
+    "label": "spam"
+  },
+  {
+    "subject": "Claim Your Lottery Prize Now!",
+    "body": "You have won ₹5,00,000 in the MegaDraw. Provide your details to process your prize claim.",
+    "label": "spam"
+  },
+  {
+    "subject": "Get Rich Quick with Bitcoin",
+    "body": "Invest today and double your money in 3 days. Limited-time crypto investment offer!",
+    "label": "spam"
+  },
+  {
+    "subject": "Your Account Has Been Compromised",
+    "body": "Suspicious activity detected. Click the link to secure your account immediately.",
+    "label": "spam"
+  },
+  {
+    "subject": "Win a Free Vacation to Maldives!",
+    "body": "Participate in our online survey and stand a chance to win an all-expense-paid trip to the Maldives.",
+    "label": "spam"
+  },
+  {
+    "subject": "You’ve Been Selected for a Special Bonus",
+    "body": "Congratulations! You’ve been randomly selected for a special cash bonus. Redeem now.",
+    "label": "spam"
+  },
+  {
+    "subject": "Free Movie Streaming for Life",
+    "body": "Access unlimited movies forever. Just register today and unlock your lifetime membership.",
+    "label": "spam"
+  },
+  {
+    "subject": "Act Now: Loan Approval in 5 Minutes",
+    "body": "Get instant approval on personal loans without credit check. Apply today!",
+    "label": "spam"
+  },
+  {
+    "subject": "Your Payment Failed – Verify Card Info",
+    "body": "Your recent payment was declined. Click the link to update your card details and retry.",
+    "label": "spam"
+  },
+  {
+    "subject": "Unclaimed Funds Waiting for You",
+    "body": "You have unclaimed funds in your name. Contact our agent immediately to receive payment.",
+    "label": "spam"
+  },
+  {
+    "subject": "Instant Weight Loss Secrets Revealed",
+    "body": "Lose 10 kg in a month with this simple herbal formula. Click here to learn more.",
+    "label": "spam"
+  },
+  {
+    "subject": "Congratulations on Your New Credit Card",
+    "body": "You are pre-approved for a platinum credit card. Activate it instantly by clicking the link below.",
+    "label": "spam"
+  },
+  {
+    "subject": "Exclusive Offer: Get 100% Cashback",
+    "body": "Register now and earn 100% cashback on your first deposit. Don’t miss this chance!",
+    "label": "spam"
+  },
+  {
+    "subject": "Suspicious Login Detected",
+    "body": "We noticed suspicious activity on your account. Click here to verify immediately.",
+    "label": "spam"
+  },
+  {
+    "subject": "Guaranteed Way to Earn Money Online",
+    "body": "Make ₹50,000 every month from home with zero investment. Join today!",
+    "label": "spam"
+  },
+  {
+    "subject": "Exclusive Investment Opportunity",
+    "body": "Get insider tips to multiply your wealth. Sign up now to access premium financial insights.",
+    "label": "spam"
+  },
+  {
+    "subject": "Free Shopping Voucher Just for You",
+    "body": "You’ve been selected to receive a ₹1000 shopping voucher. Claim your gift now!",
+    "label": "spam"
+  }
+]
