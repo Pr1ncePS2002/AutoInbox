@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 # from groq import Groq
 from openai import OpenAI
 from llm_utils.summarizer import ai_summarize, summarize_email
+from llm_utils.cache import get_classification_cache
 from config.settings import LLM_SETTINGS
 
 load_dotenv()
@@ -19,6 +20,16 @@ RESPONSE_MODEL = LLM_SETTINGS.get("RESPONSE_MODEL", "gpt-4o-mini")
 
 def categorize_email(subject, body):
     try:
+        # Check cache first
+        cache = get_classification_cache()
+        cached_result = cache.get_cached_classification(body, subject)
+        
+        if cached_result:
+            print(f"📋 Using cached categorization: {cached_result['category']} ({cached_result['cache_type']})")
+            return cached_result['category']
+        
+        # If not in cache, use LLM
+        print("🤖 Calling LLM for email categorization...")
         prompt_content = f"""
         You are an email categorization engine. Your task is to classify an email into one of the following categories based on its content:
         - Important: Personal or work-related messages that seem to be from a real person and are not automated.
@@ -39,7 +50,13 @@ def categorize_email(subject, body):
             model=CLASSIFICATION_MODEL,
             temperature=0.0
         )
-        return chat_completion.choices[0].message.content.strip()
+        
+        category = chat_completion.choices[0].message.content.strip()
+        
+        # Cache the result
+        cache.cache_classification(body, subject, category, confidence=0.9)
+        
+        return category
 
     except Exception as e:
         print(f"⚠️ Error categorizing email: {e}")
@@ -47,6 +64,17 @@ def categorize_email(subject, body):
 
 def check_if_reply_needed(subject, body):
     try:
+        # Check cache first (using a different cache key prefix for reply classification)
+        cache = get_classification_cache()
+        cache_key_content = f"REPLY_CHECK: {body}"
+        cached_result = cache.get_cached_classification(cache_key_content, subject)
+        
+        if cached_result:
+            print(f"📋 Using cached reply classification: {cached_result['category']} ({cached_result['cache_type']})")
+            return cached_result['category']
+        
+        # If not in cache, use LLM
+        print("🤖 Calling LLM for reply classification...")
         # This is your highly detailed prompt for checking if a reply is needed
         prompt_content = f"""
         You are a hyper-efficient executive assistant AI. Your sole purpose is to classify incoming emails based on a strict set of rules provided by your user to determine if a personal reply is mandatory.
@@ -75,7 +103,13 @@ def check_if_reply_needed(subject, body):
             model=CLASSIFICATION_MODEL,
             temperature=0.0
         )
-        return chat_completion.choices[0].message.content.strip()
+        
+        classification = chat_completion.choices[0].message.content.strip()
+        
+        # Cache the result
+        cache.cache_classification(cache_key_content, subject, classification, confidence=0.9)
+        
+        return classification
 
     except Exception as e:
         print(f"⚠️ Error classifying email importance: {e}")
